@@ -88,28 +88,8 @@ https://github.com/gitlimes/discord-md-badge?
 
 # Build dependencies 🏗️
 
-## Python
-
-- minecraft-launcher-lib==6.5
-- flet==0.24.1
-- flet-contrib==2024.3.6
+- flet==0.27.6
+- minecraft-launcher-lib==7.1
 - pypresence==4.3.0
-- psutil==6.1.0
-- colorama==0.4.6
 
-### python >= 3.12
-
-## Rust
-
-- zip
-
-### rust >= 1.18.0
-
-## External tools needed
-
-- upx https://github.com/upx/upx (for optimization)
-- cargo https://github.com/rust-lang/cargo (for build NoxLauncher Updater)
-
-### Command
-
-`python build.py <platform>`
+### python >= 3.13.0
