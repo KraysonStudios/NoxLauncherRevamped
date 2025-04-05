@@ -1,6 +1,7 @@
 import flet
 
 from ui.home import HomeView
+from ui.settings import SettingsView
 from basic.constants import NOXLAUNCHER_VERSION
 
 class NoxLauncher:
@@ -10,6 +11,10 @@ class NoxLauncher:
         self.page: flet.Page = page
 
         self.page.title = f"NoxLauncher v{NOXLAUNCHER_VERSION}"
+
+        self.page.fonts = {
+            "NoxLauncher": "assets/fonts/NoxLauncher.ttf" 
+        }
 
         self.page.theme = None
         self.page.theme_mode = None
@@ -21,12 +26,7 @@ class NoxLauncher:
 
         self.rounter: StandaloneRouter = StandaloneRouter(page)
         
-        self.rounter.go_to_home()
-        self.build_ui()
-
-    def build_ui(self) -> None:
-
-        ...
+        self.page.go("/home")
 
 class StandaloneRouter:
 
@@ -41,11 +41,9 @@ class StandaloneRouter:
 
             match self.page.route:
                 case "/home": self.page.views.append(HomeView(self.page).build_ui())
+                case "/settings": self.page.views.append(SettingsView(self.page).build_ui())
 
             self.page.update()
 
         self.page.on_route_change = routing
-
-    def go_to_home(self) -> None:
-        self.page.go("/home")
     

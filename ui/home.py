@@ -77,16 +77,49 @@ class HomeView:
                     expand_loose= True,
                     controls= [
                         flet.Container(
-                            flet.TextField(multiline= False, width= 250, height= 70, border_radius= 10, border_color= "#717171", border_width= 2, label= "Nombre de usuario", hint_text= "Ejemplo: elRasshXD"),
+                            flet.TextField(
+                                multiline= False, 
+                                width= 250, 
+                                height= 70, 
+                                border_radius= 10, 
+                                border_color= "#717171", 
+                                border_width= 2, 
+                                label= "Nombre de usuario", 
+                                hint_text= "Ejemplo: elRasshXD",
+                                text_style= flet.TextStyle(
+                                    font_family= "NoxLauncher",
+                                    color= "#FFFFFF"
+                                ),
+                                hint_style= flet.TextStyle(
+                                    font_family= "NoxLauncher",
+                                    color= "#FFFFFF"
+                                ),
+                                label_style= flet.TextStyle(
+                                    font_family= "NoxLauncher",
+                                    color= "#FFFFFF"
+                                ),
+                            ),
                             height= 70,
                             width= 250,
                             alignment= flet.alignment.center,
                             padding= flet.padding.only(top= 10)
                         ),
                         flet.Container(
-                            flet.Dropdown(hint_text= "Versión de Minecraft", options= [flet.dropdown.Option("1.16.5")], border_color= "#717171", border_radius= 10, border_width= 2, width= 250),
+                            flet.Dropdown(
+                                hint_text= "Versión de Minecraft", 
+                                options= [flet.dropdown.Option("1.16.5")], 
+                                border_color= "#717171", border_radius= 10, 
+                                border_width= 2, 
+                                width= 270,
+                                text_style= flet.TextStyle(
+                                    font_family= "NoxLauncher"
+                                ),
+                                hint_style= flet.TextStyle(
+                                    font_family= "NoxLauncher"
+                                ),
+                            ),
                             height= 70,
-                            width= 250,
+                            width= 270,
                             alignment= flet.alignment.center,
                         ),
                         flet.Container(
@@ -97,7 +130,10 @@ class HomeView:
                                 width= 150,
                                 height= 45,
                                 style= flet.ButtonStyle(
-                                    shape= flet.RoundedRectangleBorder(radius= 5)
+                                    shape= flet.RoundedRectangleBorder(radius= 5),
+                                    text_style= flet.TextStyle(
+                                        font_family= "NoxLauncher"
+                                    )
                                 )
                             ),
                             height= 45,
@@ -107,9 +143,21 @@ class HomeView:
                         flet.Container(expand= True, expand_loose= True),
                         flet.Container(
                             flet.IconButton(
-                                flet.icons.SETTINGS,
+                                flet.Icons.LOGIN,
+                                icon_size= 40,
+                                icon_color= "#717171"
+                            ),
+                            height= 70,
+                            width= 70,
+                            alignment= flet.alignment.center,
+                            padding= flet.padding.only(right= 10)
+                        ),
+                        flet.Container(
+                            flet.IconButton(
+                                flet.Icons.SETTINGS,
                                 icon_size= 40,
                                 icon_color= "#717171",
+                                on_click= lambda _: self.page.go("/settings")
                             ),
                             height= 70,
                             width= 70,
