@@ -1,11 +1,11 @@
 <p align="center">
-   <img alt= "NoxLauncher logo" src= "https://github.com/KraysonStudios/NoxLauncher/blob/master/assets/icon.png" style= "width: 75%; height: 55%;">
+   <img alt= "NoxLauncher logo" src= "https://github.com/KraysonStudios/NoxLauncherRevamped/blob/master/assets/icon.png" style= "width: 75%; height: 55%;">
 </p>
 
 <h1 align="center">NoxLauncher</h1>
 
 <p align="center">
-   <img alt= "NoxLauncher Home page" src= "https://github.com/KraysonStudios/NoxLauncher/blob/master/github-assets/home.png" style= "width: 75%; height: 55%;">
+   <img alt= "NoxLauncher Home page" src= "https://github.com/KraysonStudios/NoxLauncherRevamped/blob/master/github-assets/home.png" style= "width: 75%; height: 55%;">
 </p>
 
 A **Minecraft launcher** that focuses on aesthetics, intuition, and being a safety hangar for frequent Minecraft users.
@@ -35,11 +35,11 @@ https://github.com/gitlimes/discord-md-badge?
 - **Forge** mods
 
 <p align="center">
-   <img alt= "NoxLauncher Modrinth page" src= "https://github.com/KraysonStudios/NoxLauncher/blob/master/github-assets/modrinth.png" style= "width: 75%; height: 55%;">
+   <img alt= "NoxLauncher Modrinth page" src= "https://github.com/KraysonStudios/NoxLauncherRevamped/blob/master/github-assets/modrinth.png" style= "width: 75%; height: 55%;">
 </p>
 
 <p align="center">
-   <img alt= "NoxLauncher Modrinth page" src= "https://github.com/KraysonStudios/NoxLauncher/blob/master/github-assets/modrinth-dropdown.png" style= "width: 75%; height: 55%;">
+   <img alt= "NoxLauncher Modrinth page" src= "https://github.com/KraysonStudios/NoxLauncherRevamped/blob/master/github-assets/modrinth-dropdown.png" style= "width: 75%; height: 55%;">
 </p>
 
 ### Easy to Use and configurable 👑
@@ -47,11 +47,11 @@ https://github.com/gitlimes/discord-md-badge?
 - Is **extremely configurable** launcher of Minecraft.
 
 <p align="center">
-   <img alt= "NoxLauncher Settings page" src= "https://github.com/KraysonStudios/NoxLauncher/blob/master/github-assets/settings.png" style= "width: 75%; height: 55%;">
+   <img alt= "NoxLauncher Settings page" src= "https://github.com/KraysonStudios/NoxLauncherRevamped/blob/master/github-assets/settings.png" style= "width: 75%; height: 55%;">
 </p>
 
 <p align="center">
-   <img alt= "NoxLauncher Customization page" src= "https://github.com/KraysonStudios/NoxLauncher/blob/master/github-assets/customization.png" style= "width: 75%; height: 55%;">
+   <img alt= "NoxLauncher Customization page" src= "https://github.com/KraysonStudios/NoxLauncherRevamped/blob/master/github-assets/customization.png" style= "width: 75%; height: 55%;">
 </p>
 
 ### Solid as an rock 🪨
