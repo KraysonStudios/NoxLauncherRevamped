@@ -3,7 +3,9 @@ import flet
 from ui.home import HomeView
 from ui.settings import SettingsView
 from ui.accounts import AccountView
-from basic.constants import NOXLAUNCHER_VERSION
+from ui.mods import ModsView
+
+from basic.constants import DEPLOYMENT_TYPE, NOXLAUNCHER_VERSION
 
 class NoxLauncher:
 
@@ -11,7 +13,7 @@ class NoxLauncher:
         
         self.page: flet.Page = page
 
-        self.page.title = f"NoxLauncher v{NOXLAUNCHER_VERSION}"
+        self.page.title = f"NoxLauncher {DEPLOYMENT_TYPE} v{NOXLAUNCHER_VERSION}"
 
         self.page.fonts = {
             "NoxLauncher": "assets/fonts/NoxLauncher.ttf" 
@@ -44,6 +46,7 @@ class StandaloneRouter:
                 case "/home": self.page.views.append(HomeView(self.page).build_ui())
                 case "/accounts": self.page.views.append(AccountView(self.page).build_ui())
                 case "/settings": self.page.views.append(SettingsView(self.page).build_ui())
+                case "/mods": self.page.views.append(ModsView(self.page).build_ui())
 
             self.page.update()
 

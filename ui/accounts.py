@@ -10,7 +10,7 @@ class AccountView:
     def build_ui(self) -> flet.View:
 
         return flet.View(
-            "/home",
+            "/accounts",
             appbar= flet.AppBar(
                 leading= flet.Container(
                     flet.FilledButton(

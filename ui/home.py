@@ -142,6 +142,21 @@ class HomeView:
                         ),
                         flet.Container(expand= True, expand_loose= True),
                         flet.Container(
+                            flet.Image(
+                                src= "assets/curseforge.png",
+                                width= 60,
+                                height= 60,
+                            ),
+                            alignment= flet.alignment.center,
+                            width= 70,
+                            height= 70,
+                            on_click= lambda _: self.page.go("/mods"),
+                            on_hover= self.external_button_hover,
+                            bgcolor= "#272727",
+                            border_radius= 10
+                        ),
+                        flet.VerticalDivider(width= 1, thickness= 1, color= "#717171"),
+                        flet.Container(
                             flet.IconButton(
                                 flet.Icons.LOGIN,
                                 icon_size= 40,
@@ -203,7 +218,7 @@ class HomeView:
                                                     flet.Row(
                                                         [
                                                             flet.Text(
-                                                                ">",
+                                                                "➤",
                                                                 font_family= "NoxLauncher",
                                                                 size= 20,
                                                                 color= "#28ff8e"
@@ -233,7 +248,7 @@ class HomeView:
                                                     flet.Row(
                                                         [
                                                             flet.Text(
-                                                                ">",
+                                                                "➤",
                                                                 font_family= "NoxLauncher",
                                                                 size= 20,
                                                                 color= "#28ff8e"
@@ -265,8 +280,8 @@ class HomeView:
                                             horizontal_alignment= flet.CrossAxisAlignment.CENTER
                                         ),
                                         blur= flet.Blur(
-                                            20,
-                                            20,
+                                            5,
+                                            5,
                                             tile_mode= flet.BlurTileMode.MIRROR
                                         ),
                                         width= 600,

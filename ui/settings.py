@@ -1,5 +1,6 @@
 import flet
 import webbrowser
+import minecraft_launcher_lib
 
 class SettingsView:
 
@@ -10,7 +11,7 @@ class SettingsView:
     def build_ui(self) -> flet.View:
 
         return flet.View(
-            "/home",
+            "/settings",
             appbar= flet.AppBar(
                 leading= flet.Container(
                     flet.FilledButton(
@@ -256,7 +257,26 @@ class SettingsView:
                                                 flet.Container(
                                                     flet.Dropdown(
                                                         hint_text= "Java",
-                                                        options= [], 
+                                                        options= [
+                                                            flet.DropdownOption(
+                                                                key= java,
+                                                                text= java,
+                                                                leading_icon= flet.Image(
+                                                                    src= "assets/java.png",
+                                                                    width= 35,
+                                                                    height= 25,
+                                                                    repeat= flet.ImageRepeat.NO_REPEAT,
+                                                                    filter_quality= flet.FilterQuality.HIGH
+                                                                ),
+                                                                style= flet.ButtonStyle(
+                                                                    text_style= flet.TextStyle(
+                                                                        size= 13,
+                                                                        color= "#FFFFF",
+                                                                        font_family= "NoxLauncher"
+                                                                    )
+                                                                )
+                                                            ) for java in minecraft_launcher_lib.java_utils.find_system_java_versions()
+                                                        ], 
                                                         border_color= "#717171",
                                                         border_width= 2, 
                                                         border_radius= 10, 
