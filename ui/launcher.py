@@ -2,6 +2,7 @@ import flet
 
 from ui.home import HomeView
 from ui.settings import SettingsView
+from ui.accounts import AccountView
 from basic.constants import NOXLAUNCHER_VERSION
 
 class NoxLauncher:
@@ -41,6 +42,7 @@ class StandaloneRouter:
 
             match self.page.route:
                 case "/home": self.page.views.append(HomeView(self.page).build_ui())
+                case "/accounts": self.page.views.append(AccountView(self.page).build_ui())
                 case "/settings": self.page.views.append(SettingsView(self.page).build_ui())
 
             self.page.update()

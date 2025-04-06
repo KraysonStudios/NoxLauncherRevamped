@@ -145,7 +145,8 @@ class HomeView:
                             flet.IconButton(
                                 flet.Icons.LOGIN,
                                 icon_size= 40,
-                                icon_color= "#717171"
+                                icon_color= "#717171",
+                                on_click= lambda _: self.page.go("/accounts")
                             ),
                             height= 70,
                             width= 70,
@@ -172,6 +173,118 @@ class HomeView:
             ),
             controls= [
                 flet.Container(
+                    flet.Row(
+                        [
+                            flet.Column(
+                                [
+                                    flet.Container(
+                                        flet.Column(
+                                            [
+                                                flet.Row(
+                                                    [
+                                                        flet.Image(
+                                                            src= "assets/icon.png",
+                                                            width= 100,
+                                                            height= 70,
+                                                            repeat= flet.ImageRepeat.NO_REPEAT,
+                                                            filter_quality= flet.FilterQuality.HIGH
+                                                        ),
+                                                        flet.Text(
+                                                            "Tour por NoxLauncher",
+                                                            font_family= "NoxLauncher",
+                                                            size= 20
+                                                        )
+                                                    ],
+                                                    height= 100,
+                                                    expand_loose= True,
+                                                    alignment= flet.MainAxisAlignment.CENTER
+                                                ),
+                                                flet.Container(
+                                                    flet.Row(
+                                                        [
+                                                            flet.Text(
+                                                                ">",
+                                                                font_family= "NoxLauncher",
+                                                                size= 20,
+                                                                color= "#28ff8e"
+                                                            ),
+                                                            flet.IconButton(
+                                                                flet.Icons.LOGIN,
+                                                                icon_color= "#717171",
+                                                                icon_size= 30,
+                                                                on_click= lambda _: self.page.go("/accounts")
+                                                            ),
+                                                            flet.Text(
+                                                                "Iniciar sesión en cuentas no premiun o de microsoft.",
+                                                                font_family= "NoxLauncher",
+                                                                size= 13,
+                                                                color= "#FFFFFF",
+                                                            ),
+                                                        ],
+                                                        height= 40,
+                                                        expand_loose= True,
+                                                        alignment= flet.MainAxisAlignment.START,
+                                                    ),
+                                                    expand_loose= True,
+                                                    height= 40,
+                                                    padding= flet.padding.only(left= 40)
+                                                ),
+                                                flet.Container(
+                                                    flet.Row(
+                                                        [
+                                                            flet.Text(
+                                                                ">",
+                                                                font_family= "NoxLauncher",
+                                                                size= 20,
+                                                                color= "#28ff8e"
+                                                            ),
+                                                            flet.IconButton(
+                                                                flet.Icons.SETTINGS,
+                                                                icon_color= "#717171",
+                                                                icon_size= 30,
+                                                                on_click= lambda _: self.page.go("/settings")
+                                                            ),
+                                                            flet.Text(
+                                                                "Configurar NoxLauncher y Java.",
+                                                                font_family= "NoxLauncher",
+                                                                size= 13,
+                                                                color= "#FFFFFF"
+                                                            ),
+                                                        ],
+                                                        height= 40,
+                                                        expand_loose= True,
+                                                        alignment= flet.MainAxisAlignment.START,
+                                                    ),
+                                                    expand_loose= True,
+                                                    height= 40,
+                                                    padding= flet.padding.only(left= 40)
+                                                ),
+                                            ],
+                                            expand= True,
+                                            expand_loose= True,
+                                            horizontal_alignment= flet.CrossAxisAlignment.CENTER
+                                        ),
+                                        blur= flet.Blur(
+                                            20,
+                                            20,
+                                            tile_mode= flet.BlurTileMode.MIRROR
+                                        ),
+                                        width= 600,
+                                        height= 240,
+                                        border_radius= 10,
+                                        alignment= flet.alignment.center
+                                    ),
+                                ],
+                                alignment= flet.MainAxisAlignment.CENTER,
+                                horizontal_alignment= flet.CrossAxisAlignment.CENTER
+                            )
+                        ],
+                        expand_loose= True,
+                        expand= True,
+                        alignment= flet.MainAxisAlignment.CENTER,
+                        run_spacing= 100,
+                        spacing= 100
+                    ),
                     image= flet.DecorationImage(
                         src= "assets/bghome.png", 
                         fit= flet.ImageFit.COVER, 

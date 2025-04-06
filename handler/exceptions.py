@@ -1,5 +1,13 @@
-from types import TracebackType
+from typing import Callable, Any
+from functools import wraps
 
-def handle_uncaught_exception(type : type[BaseException], value : BaseException, traceback : TracebackType | None) -> None:   
+def handle_exceptions(func: Callable[[Any], Any]) -> None: 
 
-    ...
+    @wraps(func)
+    def wrapper(*args, **kwargs) -> Callable[[Any], Any] | None:
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            return None
+        
+    return wrapper
