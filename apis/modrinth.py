@@ -83,8 +83,44 @@ class ModrinthAPI:
             )
 
             return contain
-        
-        request: requests.Request = requests.get(f"{self.base_url}/search", headers= self.headers)
+
+        try:
+
+            request: requests.Response = requests.get(f"{self.base_url}/search", headers= self.headers, params= {
+                "limit": 5,
+            })
+
+        except:
+
+            contain.clear()
+            contain.append(
+                flet.Container(
+                    flet.Row(
+                        [
+                            flet.Icon(
+                                flet.Icons.ERROR,
+                                size= 40,
+                                color= flet.Colors.RED_400
+                            ),
+                            flet.Text(
+                                "Algo a salido mal, regrese más tarde.",
+                                font_family= "NoxLauncher",
+                                size= 17,
+                                color= "#FFFFFF"
+                            )
+                        ],
+                        spacing= 20,
+                        run_spacing= 20,
+                        alignment= flet.MainAxisAlignment.CENTER,
+                    ),
+                    alignment= flet.alignment.center,
+                    expand_loose= True,
+                    height= 100,
+                    padding= flet.padding.only(left= 20, right= 20)
+                )
+            )
+
+            return contain
 
         for project in request.json()["hits"]:
 
@@ -154,8 +190,7 @@ class ModrinthAPI:
                                         ),
                                         alignment= flet.alignment.center,
                                         bgcolor= "#272727",
-                                        width= 100,
-                                        height= 45,
+                                        padding= flet.padding.all(10),
                                         border_radius= 20,
                                     ) for version in project["categories"]
                                 ],
@@ -167,17 +202,30 @@ class ModrinthAPI:
                             flet.Row(
                                 [
                                     flet.Container(
-                                        flet.Text(
-                                            version,
-                                            font_family= "NoxLauncher",
-                                            size= 13,
-                                            color= "#FFFFFF",
-                                            overflow= flet.TextOverflow.ELLIPSIS
+
+                                        flet.Row(
+                                            [
+                                                flet.Image(
+                                                    src= "assets/version.png",
+                                                    width= 30,
+                                                    height= 30,
+                                                    filter_quality= flet.FilterQuality.HIGH,
+                                                ),
+                                                flet.Text(
+                                                    version,
+                                                    font_family= "NoxLauncher",
+                                                    size= 13,
+                                                    color= "#FFFFFF",
+                                                    overflow= flet.TextOverflow.ELLIPSIS
+                                                ),
+                                            ],
+                                            spacing= 8,
+                                            run_spacing= 8,
+                                            alignment= flet.MainAxisAlignment.CENTER
                                         ),
                                         alignment= flet.alignment.center,
                                         bgcolor= "#272727",
-                                        width= 80,
-                                        height= 45,
+                                        padding= flet.padding.all(10),
                                         border_radius= 20,
                                     ) for version in reversed(project["versions"])
                                 ],
@@ -227,7 +275,7 @@ class ModrinthAPI:
 
     def rate_limiter(self) -> bool: 
 
-        if self.rate_limiter_storage["count"] >= 10 and not self.rate_limiter_storage["blocked"]:
+        if self.rate_limiter_storage["count"] >= 5 and not self.rate_limiter_storage["blocked"]:
 
             self.rate_limiter_storage["time"] =  datetime.datetime.now() + datetime.timedelta(seconds= 30)
             self.rate_limiter_storage["blocked"] = True
@@ -240,7 +288,7 @@ class ModrinthAPI:
             self.rate_limiter_storage["blocked"] = False
             return False
         
-        elif self.rate_limiter_storage["count"] >= 10: return True
+        elif self.rate_limiter_storage["count"] >= 5: return True
 
         self.rate_limiter_storage["count"] += 1
         

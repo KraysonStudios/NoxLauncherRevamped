@@ -1,4 +1,5 @@
 import flet
+import datetime
 
 from ui.home import HomeView
 from ui.settings import SettingsView
@@ -28,8 +29,12 @@ class NoxLauncher:
         self.page.update()
 
         self.rounter: StandaloneRouter = StandaloneRouter(page)
-        
-        self.page.go("/home")
+
+    def init_systems(self) -> None:
+
+        ... 
+
+    def start(self) -> None: self.page.go("/home")
 
 class StandaloneRouter:
 

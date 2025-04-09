@@ -51,6 +51,19 @@ class ModsView:
 
         self.mods_list.extend(MODRINTH_API.retrieve_home())
 
+        self.install_with_forge: bool = False
+        self.install_with_fabric: bool = False
+        self.install_with_quilt: bool = False
+
+        self.mods_column = flet.Column(
+            self.mods_list,
+            expand= True,
+            expand_loose= True,
+            run_spacing= 25,
+            spacing= 25,
+            scroll= flet.ScrollMode.AUTO
+        )
+
         self.build_ui()
 
     def build_ui(self) -> flet.View:
@@ -178,7 +191,9 @@ class ModsView:
                                                 width= 180,
                                                 height= 70,
                                                 border_radius= 20,
-                                                alignment= flet.alignment.center
+                                                alignment= flet.alignment.center,
+                                                on_click= self.on_click_mod_loader,
+                                                data= "fabric"
                                             ),
                                             flet.Container(
                                                 flet.Row(
@@ -204,7 +219,9 @@ class ModsView:
                                                 width= 180,
                                                 height= 70,
                                                 border_radius= 20,
-                                                alignment= flet.alignment.center
+                                                alignment= flet.alignment.center,
+                                                on_click= self.on_click_mod_loader,
+                                                data= "quilt"
                                             ),
                                             flet.Container(
                                                 flet.Row(
@@ -230,7 +247,9 @@ class ModsView:
                                                 width= 180,
                                                 height= 70,
                                                 border_radius= 20,
-                                                alignment= flet.alignment.center
+                                                alignment= flet.alignment.center,
+                                                on_click= self.on_click_mod_loader,
+                                                data= "forge"
                                             )
                                         ],
                                         alignment= flet.MainAxisAlignment.CENTER,
@@ -241,14 +260,7 @@ class ModsView:
                                         run_spacing= 25
                                     ),
                                     flet.VerticalDivider(color= "#717171", width= 1, thickness= 1),
-                                    flet.Column(
-                                        self.mods_list,
-                                        expand= True,
-                                        expand_loose= True,
-                                        run_spacing= 25,
-                                        spacing= 25,
-                                        scroll= flet.ScrollMode.AUTO
-                                    )
+                                    self.mods_column
                                 ],
                                 expand_loose= True,
                                 expand= True,
@@ -284,4 +296,17 @@ class ModsView:
     def external_button_hover(self, event: flet.ControlEvent) -> None:
 
         event.control.bgcolor = "#4a4a4a" if event.control.bgcolor == "#272727" else "#272727"
+        event.control.update()
+
+            
+    def on_click_mod_loader(self, event: flet.ControlEvent) -> None:
+
+        event.control.bgcolor = "#148b47" if event.control.bgcolor == "#272727" else "#272727"
+
+        match event.control.data:
+
+            case "fabric": self.install_with_fabric = True
+            case "forge": self.install_with_forge = True
+            case "quilt": self.install_with_quilt = True
+
         event.control.update()

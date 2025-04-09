@@ -5,7 +5,10 @@ from basic.constants import DEPLOYMENT_TYPE, NOXLAUNCHER_VERSION
 
 def main(page: flet.Page) -> None:
 
-    NoxLauncher(page)
+    launcher: NoxLauncher = NoxLauncher(page)
+    
+    launcher.init_systems()
+    launcher.start()
 
 if __name__ == "__main__":
 
