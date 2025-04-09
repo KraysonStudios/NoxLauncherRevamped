@@ -1,8 +1,10 @@
 import flet
 import socket
 import datetime
-import requests
+import aiohttp
+import asyncio
 
+from functools import lru_cache
 from typing import Dict, List, Any
 
 class ModrinthAPI:
@@ -14,6 +16,7 @@ class ModrinthAPI:
         self.headers: Dict[str, str] = {"User-Agent": "https://github.com/KraysonStudios/NoxLauncher"}
 
         self.rate_limiter_storage: Dict[str, Any] = {"count": 0, "time": datetime.datetime.now(), "blocked": False}
+        self.mods_versions: Dict[str, List[str]] = {}
 
     def retrieve_home(self) -> List[flet.Container]:
 
@@ -50,7 +53,6 @@ class ModrinthAPI:
             )
 
             return contain
-        
       
         if not self.has_internet():
 
@@ -86,9 +88,13 @@ class ModrinthAPI:
 
         try:
 
-            request: requests.Response = requests.get(f"{self.base_url}/search", headers= self.headers, params= {
-                "limit": 5,
-            })
+
+            response = self.execute_request(
+                f"{self.base_url}/search",
+                {
+                    "limit": 5,
+                }
+            )                
 
         except:
 
@@ -122,7 +128,7 @@ class ModrinthAPI:
 
             return contain
 
-        for project in request.json()["hits"]:
+        for project in response["hits"]:
 
             contain.append(
                 flet.Container(
@@ -235,24 +241,73 @@ class ModrinthAPI:
                                 alignment= flet.MainAxisAlignment.START
                             ),
                             flet.Container(
-                                flet.FilledButton(
-                                    icon= flet.Icons.DOWNLOAD,
-                                    icon_color= "#FFFFFF",
-                                    text= "Instalar",
-                                    color= "#FFFFFF",
-                                    bgcolor= "#148b47",
-                                    width= 150,
-                                    height= 45,
-                                    style= flet.ButtonStyle(
-                                        shape= flet.RoundedRectangleBorder(radius= 5),
-                                        text_style= flet.TextStyle(
-                                            font_family= "NoxLauncher"
+                                flet.Row(
+                                    controls= [
+                                        flet.Container(
+                                            flet.Dropdown(
+                                                hint_text= "Versión de Minecraft", 
+                                                options= [
+                                                    flet.dropdown.Option(
+                                                        version, 
+                                                        style= flet.ButtonStyle(
+                                                            text_style= flet.TextStyle(
+                                                                size= 13,
+                                                                font_family= "NoxLauncher",
+                                                                color= "#FFFFFF"
+                                                            )
+                                                        )
+                                                    ) for version in reversed(project["versions"]) 
+                                                ], 
+                                                border_color= "#717171", 
+                                                menu_height= 250,
+                                                border_radius= 10, 
+                                                border_width= 2, 
+                                                width= 270,
+                                                text_style= flet.TextStyle(
+                                                    font_family= "NoxLauncher",
+                                                    color= "#FFFFFF"
+                                                ),
+                                                hint_style= flet.TextStyle(
+                                                    font_family= "NoxLauncher",
+                                                    color= "#FFFFFF"
+                                                ),
+                                                on_change= self.add_mod_version,
+                                                data= project["slug"],
+                                            ),
+                                            width= 300,
+                                            height= 150,
+                                            alignment= flet.alignment.center,
+                                            border_radius= 20,
+                                            bgcolor= "#272727",  
+                                        ),
+                                        flet.Container(
+                                            flet.FilledButton(
+                                                icon= flet.Icons.DOWNLOAD,
+                                                icon_color= "#FFFFFF",
+                                                text= "Instalar",
+                                                color= "#FFFFFF",
+                                                bgcolor= "#148b47",
+                                                width= 150,
+                                                height= 45,
+                                                style= flet.ButtonStyle(
+                                                    shape= flet.RoundedRectangleBorder(radius= 5),
+                                                    text_style= flet.TextStyle(
+                                                        font_family= "NoxLauncher"
+                                                    )
+                                                ),
+                                                on_click= self.install_mod,
+                                                data= project["slug"]
+                                            ),
+                                            alignment= flet.alignment.center,
                                         )
-                                    ),
-                                    on_click= lambda _: self.page.go("/home")
+                                    ],
+                                    alignment= flet.MainAxisAlignment.END,
+                                    vertical_alignment= flet.CrossAxisAlignment.END,
+                                    run_spacing= 20,
+                                    spacing= 20
                                 ),
                                 expand_loose= True,
-                                height= 40,
+                                height= 70,
                                 padding= flet.padding.only(top= 5, right= 20),
                                 alignment= flet.alignment.center_right
                             ),
@@ -266,7 +321,7 @@ class ModrinthAPI:
                     ),
                     expand_loose= True,
                     alignment= flet.alignment.center,
-                    height= 350,
+                    height= 430,
                     padding= flet.padding.only(left= 20, right= 20)
                 )
             )
@@ -294,6 +349,39 @@ class ModrinthAPI:
         
         return False
     
+    def execute_request(self, url: str, parameters: Dict[str, Any]) -> Any:
+
+        async def _exec(url: str, parameters: Dict[str, Any]) -> Any:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, params= parameters, headers= self.headers) as response:
+
+                    if response.status == 200:
+                        return await response.json()
+                    else:
+                        raise RuntimeError(f"Request '{url}' throw status code '{response.status}'.")
+
+        result = asyncio.run(_exec(url, parameters))
+
+        return result
+
+    def add_mod_version(self, event: flet.ControlEvent) -> None:
+        
+        if event.control.value is None: return
+
+        mod_slug: str = event.control.data
+
+        if self.mods_versions.get(mod_slug) is not None:
+
+            self.mods_versions[mod_slug].append(event.control.value)
+            return
+        
+        self.mods_versions[mod_slug] = [event.control.value]
+
+    def install_mod(self, event: flet.ControlEvent) -> None: 
+        
+        modrinth_identifier: str = event.control.data
+    
+    @lru_cache(maxsize= 15)
     def has_internet(self) -> bool:
 
         try:

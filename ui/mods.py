@@ -12,40 +12,35 @@ class ModsView:
 
         self.mods_list: List[flet.Container] = [
             flet.Container(
-                flet.Container(
-                    flet.TextField(
-                        multiline= False, 
-                        width= 700, 
-                        height= 50, 
-                        border_radius= 10, 
-                        border_color= "#717171", 
-                        border_width= 2, 
-                        label= "Buscar mods", 
-                        hint_text= "Ejemplo: Sodium",
-                        text_style= flet.TextStyle(
-                            font_family= "NoxLauncher",
-                            color= "#FFFFFF",
-                            size= 13
-                        ),
-                        hint_style= flet.TextStyle(
-                            font_family= "NoxLauncher",
-                            color= "#FFFFFF"
-                        ),
-                        label_style= flet.TextStyle(
-                            font_family= "NoxLauncher",
-                            color= "#FFFFFF"
-                        ),
+                flet.TextField(
+                    multiline= False, 
+                    width= 700, 
+                    height= 50, 
+                    border_radius= 10, 
+                    border_color= "#717171", 
+                    border_width= 2, 
+                    label= "Buscar mods", 
+                    hint_text= "Ejemplo: Sodium",
+                    text_style= flet.TextStyle(
+                        font_family= "NoxLauncher",
+                        color= "#FFFFFF",
+                        size= 13
                     ),
-                    width= 900,
-                    height= 80,
-                    alignment= flet.alignment.center,
-                    border_radius= 30,
-                    bgcolor= "#272727",
+                    hint_style= flet.TextStyle(
+                        font_family= "NoxLauncher",
+                        color= "#FFFFFF"
+                    ),
+                    label_style= flet.TextStyle(
+                        font_family= "NoxLauncher",
+                        color= "#FFFFFF"
+                    ),
                 ),
+                width= 750,
+                height= 80,
                 alignment= flet.alignment.center,
-                width= 910,
-                height= 100,
-                padding= flet.padding.only(top= 20, left= 10)
+                border_radius= 30,
+                bgcolor= "#272727",
+                padding= flet.padding.all(10)
             )
         ]
 
@@ -54,15 +49,6 @@ class ModsView:
         self.install_with_forge: bool = False
         self.install_with_fabric: bool = False
         self.install_with_quilt: bool = False
-
-        self.mods_column = flet.Column(
-            self.mods_list,
-            expand= True,
-            expand_loose= True,
-            run_spacing= 25,
-            spacing= 25,
-            scroll= flet.ScrollMode.AUTO
-        )
 
         self.build_ui()
 
@@ -193,6 +179,7 @@ class ModsView:
                                                 border_radius= 20,
                                                 alignment= flet.alignment.center,
                                                 on_click= self.on_click_mod_loader,
+                                                on_hover= self.on_hover_mod_loader,
                                                 data= "fabric"
                                             ),
                                             flet.Container(
@@ -221,6 +208,7 @@ class ModsView:
                                                 border_radius= 20,
                                                 alignment= flet.alignment.center,
                                                 on_click= self.on_click_mod_loader,
+                                                on_hover= self.on_hover_mod_loader,
                                                 data= "quilt"
                                             ),
                                             flet.Container(
@@ -249,6 +237,7 @@ class ModsView:
                                                 border_radius= 20,
                                                 alignment= flet.alignment.center,
                                                 on_click= self.on_click_mod_loader,
+                                                on_hover= self.on_hover_mod_loader,
                                                 data= "forge"
                                             )
                                         ],
@@ -260,7 +249,14 @@ class ModsView:
                                         run_spacing= 25
                                     ),
                                     flet.VerticalDivider(color= "#717171", width= 1, thickness= 1),
-                                    self.mods_column
+                                    flet.Column(
+                                        self.mods_list,
+                                        expand= True,
+                                        expand_loose= True,
+                                        run_spacing= 25,
+                                        spacing= 25,
+                                        scroll= flet.ScrollMode.AUTO,
+                                    )
                                 ],
                                 expand_loose= True,
                                 expand= True,
@@ -271,8 +267,8 @@ class ModsView:
                             height= 500,
                             border_radius= 10,
                             blur= flet.Blur(
-                                5,
-                                5,
+                                8,
+                                8,
                                 tile_mode= flet.BlurTileMode.MIRROR
                             )
                         ),
@@ -298,6 +294,10 @@ class ModsView:
         event.control.bgcolor = "#4a4a4a" if event.control.bgcolor == "#272727" else "#272727"
         event.control.update()
 
+    def on_hover_mod_loader(self, event: flet.ControlEvent) -> None:
+
+        event.control.bgcolor = "#148b47" if event.control.bgcolor == "#272727" else "#272727"
+        event.control.update()
             
     def on_click_mod_loader(self, event: flet.ControlEvent) -> None:
 

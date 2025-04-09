@@ -6,7 +6,7 @@ from functools import lru_cache
 @lru_cache(maxsize= 16)
 def GetNoxLauncherHome() -> str:
 
-    HomePath: str | None = os.environ.get("APPDTA") if platform.system() == "Windows" else os.environ.get("OME")
+    HomePath: str | None = os.environ.get("APPDATA") if platform.system() == "Windows" else os.environ.get("HOME")
     NoxLauncherBasePath: str = f"{HomePath}/NoxLauncher"
 
     if HomePath is None:

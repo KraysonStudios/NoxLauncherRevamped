@@ -102,7 +102,7 @@ class HomeView:
                             height= 70,
                             width= 250,
                             alignment= flet.alignment.center,
-                            padding= flet.padding.only(top= 10)
+                            padding= flet.padding.only(top= 9)
                         ),
                         flet.Container(
                             flet.Dropdown(
