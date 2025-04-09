@@ -1,7 +1,7 @@
 import flet
 import webbrowser
 
-from apis.modrinth import MODRINTH_API
+from apis.modrinth import ModrinthAPI
 from typing import List
 
 class ModsView:
@@ -9,6 +9,8 @@ class ModsView:
     def __init__(self, page: flet.Page) -> None:
 
         self.page: flet.Page = page
+
+        self.modrinth_api: ModrinthAPI = ModrinthAPI(self.page, [])
 
         self.mods_list: List[flet.Container] = [
             flet.Container(
@@ -44,11 +46,7 @@ class ModsView:
             )
         ]
 
-        self.mods_list.extend(MODRINTH_API.retrieve_home())
-
-        self.install_with_forge: bool = False
-        self.install_with_fabric: bool = False
-        self.install_with_quilt: bool = False
+        self.mods_list.extend(self.modrinth_api.search({"limit" : 5}))
 
         self.build_ui()
 
@@ -305,8 +303,8 @@ class ModsView:
 
         match event.control.data:
 
-            case "fabric": self.install_with_fabric = True
-            case "forge": self.install_with_forge = True
-            case "quilt": self.install_with_quilt = True
+            case "fabric": self.modrinth_api.add_mod_loader(event.control.data)
+            case "forge": self.modrinth_api.add_mod_loader(event.control.data)
+            case "quilt": self.modrinth_api.add_mod_loader(event.control.data)
 
         event.control.update()

@@ -7,18 +7,21 @@ import asyncio
 from functools import lru_cache
 from typing import Dict, List, Any
 
+from ui.alert import ErrorAlert
+
 class ModrinthAPI:
 
-    def __init__(self, loaders: List[str]) -> None:
-    
-        self.mc_loaders: List[str] = loaders
+    def __init__(self, page: flet.Page, mc_mod_loaders: List[str]) -> None:
+        
+        self.page: flet.Page = page
+        self.mod_loaders: List[str] = mc_mod_loaders
         self.base_url: str = "https://api.modrinth.com/v2"
         self.headers: Dict[str, str] = {"User-Agent": "https://github.com/KraysonStudios/NoxLauncher"}
 
         self.rate_limiter_storage: Dict[str, Any] = {"count": 0, "time": datetime.datetime.now(), "blocked": False}
         self.mods_versions: Dict[str, List[str]] = {}
 
-    def retrieve_home(self) -> List[flet.Container]:
+    def search(self, parameters: Dict[str, Any]) -> List[flet.Container]:
 
         contain: List[flet.Container] = []
 
@@ -91,9 +94,7 @@ class ModrinthAPI:
 
             response = self.execute_request(
                 f"{self.base_url}/search",
-                {
-                    "limit": 5,
-                }
+                parameters= parameters
             )                
 
         except:
@@ -127,6 +128,14 @@ class ModrinthAPI:
             )
 
             return contain
+        
+        if response is None:
+
+            self.page.open(
+                ErrorAlert(self.page, description= f"No se ha podido cargar la página principal de Modrinth. Regrese más tarde.").build()
+            )
+
+            return
 
         for project in response["hits"]:
 
@@ -358,7 +367,7 @@ class ModrinthAPI:
                     if response.status == 200:
                         return await response.json()
                     else:
-                        raise RuntimeError(f"Request '{url}' throw status code '{response.status}'.")
+                        raise None
 
         result = asyncio.run(_exec(url, parameters))
 
@@ -377,9 +386,61 @@ class ModrinthAPI:
         
         self.mods_versions[mod_slug] = [event.control.value]
 
+
+    def add_mod_loader(self, mod_loader: str) -> None:
+
+        if mod_loader in self.mod_loaders: return
+        self.mod_loaders.append(mod_loader)
+
     def install_mod(self, event: flet.ControlEvent) -> None: 
+
+        if len(self.mod_loaders) == 0:
+
+            self.page.open(
+                ErrorAlert(self.page, description= "Debes seleccionar un cargador de mods previamente!").build()
+            )
+
+            return
+
+        mod_identifier: str = event.control.data
+
+        whole_project = self.execute_request(
+            f"{self.base_url}/project/{mod_identifier}/version",
+            {}
+        )
+
+        if whole_project is None:
+
+            self.page.open(
+                ErrorAlert(self.page, description= f"No se ha podido descargar el mod '{mod_identifier.capitalize()}'. Regrese más tarde.").build()
+            )
+
+            return
+
+        if self.mods_versions.get(mod_identifier) is None:
+
+            self.page.open(
+                ErrorAlert(self.page, description= f"Debes seleccionar una versión de minecraft para el mod '{mod_identifier.capitalize()}'.").build()
+            )
+
+            return
+
+        versions_target: List[str] = self.mods_versions.get(mod_identifier)
         
-        modrinth_identifier: str = event.control.data
+        matching_versions: List[Dict[str, Any]] = [
+            version for version in whole_project
+            if any(game_version in versions_target for game_version in version["game_versions"]) and any(game_loader in self.mod_loaders for game_loader in version["loaders"])
+        ]
+
+        if len(matching_versions) == 0:
+
+            self.page.open(
+                ErrorAlert(self.page, description= f"Cero resultados para '{mod_identifier.capitalize()}', para la versiones '{" ".join(versions_target)}' con los mod loaders '{" ".join(self.mod_loaders)}'.").build()
+            )
+
+            return
+        
+        print(matching_versions)
     
     @lru_cache(maxsize= 15)
     def has_internet(self) -> bool:
@@ -389,5 +450,3 @@ class ModrinthAPI:
             return True
         except:
             return False
-
-MODRINTH_API: ModrinthAPI = ModrinthAPI([])
