@@ -3,23 +3,25 @@ import socket
 import datetime
 import aiohttp
 import asyncio
+import time
 
 from functools import lru_cache
 from typing import Dict, List, Any
 
+from filesystem.utils import GetFolderMods
 from ui.alert import ErrorAlert
 
 class ModrinthAPI:
 
-    def __init__(self, page: flet.Page, mc_mod_loaders: List[str]) -> None:
+    def __init__(self, page: flet.Page, mod_loader: str) -> None:
         
         self.page: flet.Page = page
-        self.mod_loaders: List[str] = mc_mod_loaders
+        self.mod_loader: str = mod_loader
         self.base_url: str = "https://api.modrinth.com/v2"
         self.headers: Dict[str, str] = {"User-Agent": "https://github.com/KraysonStudios/NoxLauncher"}
 
         self.rate_limiter_storage: Dict[str, Any] = {"count": 0, "time": datetime.datetime.now(), "blocked": False}
-        self.mods_versions: Dict[str, List[str]] = {}
+        self.mods_versions: Dict[str, str] = {}
 
     def search(self, parameters: Dict[str, Any]) -> List[flet.Container]:
 
@@ -92,9 +94,11 @@ class ModrinthAPI:
         try:
 
 
-            response = self.execute_request(
+            ModrinthHomePage = self.execute_request(
                 f"{self.base_url}/search",
-                parameters= parameters
+                parameters,
+                True,
+                False
             )                
 
         except:
@@ -129,15 +133,16 @@ class ModrinthAPI:
 
             return contain
         
-        if response is None:
+        if ModrinthHomePage is None:
 
             self.page.open(
                 ErrorAlert(self.page, description= f"No se ha podido cargar la página principal de Modrinth. Regrese más tarde.").build()
             )
 
             return
+        
 
-        for project in response["hits"]:
+        for project in ModrinthHomePage["hits"]:
 
             contain.append(
                 flet.Container(
@@ -358,14 +363,18 @@ class ModrinthAPI:
         
         return False
     
-    def execute_request(self, url: str, parameters: Dict[str, Any]) -> Any:
+    def execute_request(self, url: str, parameters: Dict[str, Any], return_json: bool, return_bytes: bool) -> Any:
 
         async def _exec(url: str, parameters: Dict[str, Any]) -> Any:
             async with aiohttp.ClientSession() as session:
                 async with session.get(url, params= parameters, headers= self.headers) as response:
 
-                    if response.status == 200:
+                    if response.status == 200 and not return_json and not return_bytes:
+                        return response
+                    elif response.status == 200 and return_json:
                         return await response.json()
+                    elif response.status == 200 and return_bytes:
+                        return await response.content.read()
                     else:
                         raise None
 
@@ -378,35 +387,35 @@ class ModrinthAPI:
         if event.control.value is None: return
 
         mod_slug: str = event.control.data
-
+        
         if self.mods_versions.get(mod_slug) is not None:
 
-            self.mods_versions[mod_slug].append(event.control.value)
+            self.mods_versions[mod_slug] = event.control.value
             return
         
-        self.mods_versions[mod_slug] = [event.control.value]
+        self.mods_versions[mod_slug] = event.control.value
 
-
-    def add_mod_loader(self, mod_loader: str) -> None:
-
-        if mod_loader in self.mod_loaders: return
-        self.mod_loaders.append(mod_loader)
+    def set_mod_loader(self, mod_loader: str) -> None: self.mod_loader = mod_loader
 
     def install_mod(self, event: flet.ControlEvent) -> None: 
 
-        if len(self.mod_loaders) == 0:
+        if len(self.mod_loader) == 0:
 
             self.page.open(
                 ErrorAlert(self.page, description= "Debes seleccionar un cargador de mods previamente!").build()
             )
 
             return
-
+        
         mod_identifier: str = event.control.data
+        mod_loader_target: str = self.mod_loader
+        mod_version_target: str = self.mods_versions.get(mod_identifier)
 
         whole_project = self.execute_request(
             f"{self.base_url}/project/{mod_identifier}/version",
-            {}
+            {},
+            True,
+            False
         )
 
         if whole_project is None:
@@ -424,24 +433,95 @@ class ModrinthAPI:
             )
 
             return
-
-        versions_target: List[str] = self.mods_versions.get(mod_identifier)
         
         matching_versions: List[Dict[str, Any]] = [
             version for version in whole_project
-            if any(game_version in versions_target for game_version in version["game_versions"]) and any(game_loader in self.mod_loaders for game_loader in version["loaders"])
+            if mod_version_target in version["game_versions"] and mod_loader_target in version["loaders"]
         ]
+
+        matching_versions.sort(key= lambda date: date["date_published"], reverse= True)
 
         if len(matching_versions) == 0:
 
             self.page.open(
-                ErrorAlert(self.page, description= f"Cero resultados para '{mod_identifier.capitalize()}', para la versiones '{" ".join(versions_target)}' con los mod loaders '{" ".join(self.mod_loaders)}'.").build()
+                ErrorAlert(self.page, description= f"Cero resultados para '{mod_identifier.capitalize()}', para la version '{mod_version_target}' con los mod loader '{self.mod_loader}'.").build()
             )
 
             return
         
-        print(matching_versions)
-    
+        install_text_info: flet.Text = flet.Text(value= "Descargando & instalando...", size= 14, font_family= "NoxLauncher", color= "#FFFFFF")
+        install_progress_bar: flet.ProgressBar = flet.ProgressBar(width= 150, color= "#148b47")
+        
+        install: flet.AlertDialog = flet.AlertDialog(
+            modal= True,
+            icon= flet.Image(
+                src= "assets/icon.png",
+                width= 150,
+                height= 100,
+                repeat= flet.ImageRepeat.NO_REPEAT,
+                filter_quality= flet.FilterQuality.HIGH
+            ),
+            bgcolor= "#272727",
+            content= flet.Column(
+                [
+                    flet.Text(value= matching_versions[0]["files"][0]["filename"], size= 21, font_family= "NoxLauncher", color= "#717171"),
+                    install_text_info,
+                    install_progress_bar
+                ],
+                alignment= flet.MainAxisAlignment.CENTER,
+                horizontal_alignment= flet.CrossAxisAlignment.CENTER,
+                height= 100,
+                expand_loose= True,
+                spacing= 10,
+                run_spacing= 10
+            ),
+            actions= [
+                flet.FilledButton(
+                    text= "Cancelar",
+                    style= flet.ButtonStyle(
+                        color= "#FFFFFF",
+                        bgcolor= "#148b47",
+                        text_style= flet.TextStyle(font_family= "NoxLauncher", size= 18),
+                        shape= flet.RoundedRectangleBorder(radius= 10)
+                    ),
+                    height= 50,
+                    width= 150,
+                    on_click= lambda _: self.page.close(install)
+                )
+            ],
+            on_dismiss= lambda _: None
+        )
+
+        self.page.open(install)
+
+        mod_jar = self.execute_request(
+            matching_versions[0]["files"][0]["url"],
+            {},
+            False,
+            True
+        )
+
+        if mod_jar is None:
+
+            self.page.open(
+                ErrorAlert(self.page, description= f"No se ha podido descargar el mod '{mod_identifier.capitalize()}'. Regrese más tarde.").build()
+            )
+
+            return
+
+        with open(f"{GetFolderMods()}/{matching_versions[0]["files"][0]["filename"]}", "wb") as jar: jar.write(mod_jar)
+
+        install_text_info.value = "Instalado."
+        install_text_info.size = 14
+        install_text_info.update()
+
+        install_progress_bar.value = 100
+        install_progress_bar.update()
+
+        time.sleep(3)
+
+        self.page.close(install)
+        
     @lru_cache(maxsize= 15)
     def has_internet(self) -> bool:
 

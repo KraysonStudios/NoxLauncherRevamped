@@ -10,7 +10,7 @@ class ModsView:
 
         self.page: flet.Page = page
 
-        self.modrinth_api: ModrinthAPI = ModrinthAPI(self.page, [])
+        self.modrinth_api: ModrinthAPI = ModrinthAPI(self.page, "")
 
         self.mods_list: List[flet.Container] = [
             flet.Container(
@@ -303,8 +303,8 @@ class ModsView:
 
         match event.control.data:
 
-            case "fabric": self.modrinth_api.add_mod_loader(event.control.data)
-            case "forge": self.modrinth_api.add_mod_loader(event.control.data)
-            case "quilt": self.modrinth_api.add_mod_loader(event.control.data)
+            case "fabric": self.modrinth_api.set_mod_loader(event.control.data)
+            case "forge": self.modrinth_api.set_mod_loader(event.control.data)
+            case "quilt": self.modrinth_api.set_mod_loader(event.control.data)
 
         event.control.update()

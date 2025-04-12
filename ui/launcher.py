@@ -30,10 +30,6 @@ class NoxLauncher:
 
         self.rounter: StandaloneRouter = StandaloneRouter(page)
 
-    def init_systems(self) -> None:
-
-        ... 
-
     def start(self) -> None: self.page.go("/home")
 
 class StandaloneRouter:

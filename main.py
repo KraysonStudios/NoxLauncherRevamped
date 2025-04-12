@@ -7,7 +7,6 @@ def main(page: flet.Page) -> None:
 
     launcher: NoxLauncher = NoxLauncher(page)
     
-    launcher.init_systems()
     launcher.start()
 
 if __name__ == "__main__":

@@ -1,6 +1,8 @@
 import flet
 import webbrowser
 
+from filesystem.utils import GetReleaseMinecraftVersions
+
 class HomeView:
 
     def __init__(self, page: flet.Page) -> None:
@@ -107,7 +109,7 @@ class HomeView:
                         flet.Container(
                             flet.Dropdown(
                                 hint_text= "Versión de Minecraft", 
-                                options= [flet.dropdown.Option("1.16.5")], 
+                                options= GetReleaseMinecraftVersions(), 
                                 border_color= "#717171", border_radius= 10, 
                                 border_width= 2, 
                                 width= 270,
@@ -117,6 +119,7 @@ class HomeView:
                                 hint_style= flet.TextStyle(
                                     font_family= "NoxLauncher"
                                 ),
+                                menu_height= 200
                             ),
                             height= 70,
                             width= 270,
